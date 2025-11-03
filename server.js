@@ -28,8 +28,8 @@ app.get("/", (req, res) => {
   res.json({ message: "AgriLink API is running!" });
 });
 
-// Use Render's port or default to 6969
-const PORT = process.env.PORT || 6969;
+// Use Render's port or default to 3000
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
