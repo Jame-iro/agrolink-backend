@@ -57,8 +57,8 @@ router.post("/", async (req, res) => {
       category: req.body.category,
       stock: req.body.stock,
       location: req.body.location,
-      farmerId: req.body.farmerId, // This should be a valid ObjectId
-      farmerTelegramId: req.body.farmerTelegramId, // Telegram ID as number
+      farmerId: req.body.farmerId,
+      farmerTelegramId: req.body.farmerTelegramId,
       images: req.body.images || [],
       tags: req.body.tags || [],
       isAvailable: req.body.stock > 0,
@@ -76,9 +76,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: errors.join(", ") });
     }
 
-    res
-      .status(500)
-      .json({ error: "Failed to create product: " + error.message });
+    res.status(500).json({ error: "Failed to create product: " + error.message });
   }
 });
 
