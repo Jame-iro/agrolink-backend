@@ -48,16 +48,37 @@ router.get("/:id", async (req, res) => {
 // Create new product
 router.post("/", async (req, res) => {
   try {
-    const product = new Product(req.body);
-    await product.save();
+    console.log("Received product data:", req.body);
 
-    // Populate farmer info before sending response
-    await product.populate("farmerId", "firstName username farmName");
+    const product = new Product({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      stock: req.body.stock,
+      location: req.body.location,
+      farmerId: req.body.farmerId, // This should be a valid ObjectId
+      farmerTelegramId: req.body.farmerTelegramId, // Telegram ID as number
+      images: req.body.images || [],
+      tags: req.body.tags || [],
+      isAvailable: req.body.stock > 0,
+    });
+
+    await product.save();
+    console.log("Product saved:", product);
 
     res.status(201).json(product);
   } catch (error) {
     console.error("Create product error:", error);
-    res.status(400).json({ error: "Failed to create product" });
+
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ error: errors.join(", ") });
+    }
+
+    res
+      .status(500)
+      .json({ error: "Failed to create product: " + error.message });
   }
 });
 
@@ -95,33 +116,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Create new product
-router.post("/", async (req, res) => {
-  try {
-    const product = new Product(req.body);
-    await product.save();
-
-    // Populate farmer info before sending response
-    await product.populate("farmerId", "firstName username");
-
-    res.status(201).json(product);
-  } catch (error) {
-    console.error("Create product error:", error);
-
-    // Handle validation errors
-    if (error.name === "ValidationError") {
-      const errors = Object.values(error.errors).map((err) => err.message);
-      return res.status(400).json({ error: errors.join(", ") });
-    }
-
-    // Handle duplicate key errors
-    if (error.code === 11000) {
-      return res
-        .status(400)
-        .json({ error: "Product with this name already exists" });
-    }
-
-    res.status(400).json({ error: "Failed to create product" });
-  }
-});
 module.exports = router;

@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/database');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/database");
+require("dotenv").config();
 
 // Import models and routes
-require('./models/User');
-require('./models/Product');
-require('./models/Order');
+require("./models/User");
+require("./models/Product");
+require("./models/Order");
 
 const app = express();
 
@@ -18,13 +18,13 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/orders', require('./routes/orders'));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/products", require("./routes/products"));
+app.use("/api/orders", require("./routes/orders"));
 
 // Health check
-app.get('/', (req, res) => {
-  res.json({ message: 'AgriLink API is running!' });
+app.get("/", (req, res) => {
+  res.json({ message: "AgriLink API is running!" });
 });
 
 // Use Render's port or default to 6969
