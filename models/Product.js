@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
     required: true 
   },
   farmerTelegramId: { 
-    type: Number, 
+    type: String, 
     required: true 
   },
   name: { 
