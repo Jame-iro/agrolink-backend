@@ -3,6 +3,48 @@ const express = require("express");
 const Product = require("../models/Product");
 const router = express.Router();
 
+// Get all products
+router.get("/", async (req, res) => {
+  try {
+    const { category, farmerId, search } = req.query;
+    let query = { isAvailable: true };
+
+    if (category) query.category = category;
+    if (farmerId) query.farmerTelegramId = parseInt(farmerId);
+    if (search) {
+      query.$text = { $search: search };
+    }
+
+    const products = await Product.find(query)
+      .populate("farmerId", "firstName username farmName")
+      .sort({ createdAt: -1 });
+
+    res.json(products);
+  } catch (error) {
+    console.error("Get products error:", error);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
+
+// Get single product
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "farmerId",
+      "firstName username farmName location"
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error("Get product error:", error);
+    res.status(500).json({ error: "Failed to fetch product" });
+  }
+});
+
 // Create new product
 router.post("/", async (req, res) => {
   try {
@@ -15,9 +57,8 @@ router.post("/", async (req, res) => {
       category: req.body.category,
       stock: req.body.stock,
       location: req.body.location,
+      farmerId: req.body.farmerId,
       farmerTelegramId: req.body.farmerTelegramId,
-      farmerName: req.body.farmerName,
-      farmerUsername: req.body.farmerUsername,
       images: req.body.images || [],
       tags: req.body.tags || [],
       isAvailable: req.body.stock > 0,
@@ -35,47 +76,10 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: errors.join(", ") });
     }
 
-    res
-      .status(500)
-      .json({ error: "Failed to create product: " + error.message });
+    res.status(500).json({ error: "Failed to create product: " + error.message });
   }
 });
 
-router.get("/", async (req, res) => {
-  try {
-    const { category, farmerTelegramId, search } = req.query;
-    let query = { isAvailable: true };
-
-    if (category) query.category = category;
-    if (farmerTelegramId) query.farmerTelegramId = parseInt(farmerTelegramId);
-    if (search) {
-      query.$text = { $search: search };
-    }
-
-    const products = await Product.find(query).sort({ createdAt: -1 });
-
-    res.json(products);
-  } catch (error) {
-    console.error("Get products error:", error);
-    res.status(500).json({ error: "Failed to fetch products" });
-  }
-});
-
-// Get single product - remove populate
-router.get("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-
-    res.json(product);
-  } catch (error) {
-    console.error("Get product error:", error);
-    res.status(500).json({ error: "Failed to fetch product" });
-  }
-});
 // Update product
 router.put("/:id", async (req, res) => {
   try {

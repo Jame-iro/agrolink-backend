@@ -1,16 +1,15 @@
+// models/Product.js
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+  farmerId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
   farmerTelegramId: { 
     type: Number, 
     required: true 
-  },
-  farmerName: {
-    type: String,
-    required: true
-  },
-  farmerUsername: {
-    type: String
   },
   name: { 
     type: String, 
