@@ -9,12 +9,24 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "mongoose": "^8.0.0",
+    "node-telegram-bot-api": "^0.66.0",
     "nodemon": "^3.1.10"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jame-iro/agrolink-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jame-iro/agrolink-backend/issues"
+  },
+  "homepage": "https://github.com/Jame-iro/agrolink-backend#readme"
 }
