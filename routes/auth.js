@@ -38,13 +38,13 @@ router.post("/telegram", async (req, res) => {
     if (!user) {
       user = new User({
         telegramId: telegramUser.id,
-        firstName: telegramUser.firstName,
+        firstName: telegramUser.first_name,
         username: telegramUser.username,
         role: "consumer",
       });
     } else {
       // Update user data
-      user.firstName = telegramUser.firstName;
+      user.firstName = telegramUser.first_name;
       user.username = telegramUser.username;
     }
 

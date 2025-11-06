@@ -45,10 +45,26 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create new product
 router.post("/", async (req, res) => {
   try {
     console.log("Received product data:", req.body);
+
+    let farmerTelegramId = req.body.farmerTelegramId;
+
+    if (
+      typeof farmerTelegramId === "string" &&
+      farmerTelegramId.length === 24 &&
+      /^[0-9a-fA-F]{24}$/.test(farmerTelegramId)
+    ) {
+      return res.status(400).json({
+        error:
+          "farmerTelegramId should be a Telegram user ID (number), not MongoDB ObjectId",
+      });
+    }
+
+    if (typeof farmerTelegramId === "string") {
+      farmerTelegramId = parseInt(farmerTelegramId);
+    }
 
     const product = new Product({
       name: req.body.name,
@@ -58,7 +74,9 @@ router.post("/", async (req, res) => {
       stock: req.body.stock,
       location: req.body.location,
       farmerId: req.body.farmerId,
-      farmerTelegramId: req.body.farmerTelegramId,
+      farmerTelegramId: farmerTelegramId,
+      farmerName: req.body.farmerName,
+      farmerUsername: req.body.farmerUsername,
       images: req.body.images || [],
       tags: req.body.tags || [],
       isAvailable: req.body.stock > 0,
@@ -70,13 +88,9 @@ router.post("/", async (req, res) => {
     res.status(201).json(product);
   } catch (error) {
     console.error("Create product error:", error);
-
-    if (error.name === "ValidationError") {
-      const errors = Object.values(error.errors).map((err) => err.message);
-      return res.status(400).json({ error: errors.join(", ") });
-    }
-
-    res.status(500).json({ error: "Failed to create product: " + error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to create product: " + error.message });
   }
 });
 
