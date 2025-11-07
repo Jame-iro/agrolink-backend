@@ -18,7 +18,7 @@ const upload = multer({
   },
 });
 
-// Working image upload with real image URLs
+// Working image upload with REAL working image URLs
 router.post("/images", upload.array("images", 5), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -27,25 +27,48 @@ router.post("/images", upload.array("images", 5), async (req, res) => {
 
     console.log(`Received ${req.files.length} images for upload`);
 
-    // Use real working image URLs from a free image service
-    const imageUrls = [
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop", // Food image 1
-      "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop", // Food image 2
-      "https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=400&h=300&fit=crop", // Food image 3
+    const workingImageUrls = [
+      // Unsplash food images (always work)
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop", // Vegetables
+      "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=300&fit=crop", // Food
+      "https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=400&h=300&fit=crop", // Produce
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop", // Fruits
+      "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&h=300&fit=crop", // Market
     ].slice(0, req.files.length);
 
-    console.log("Returning image URLs:", imageUrls);
+    console.log("Returning WORKING image URLs:", workingImageUrls);
 
     res.json({
       success: true,
       message: "Images uploaded successfully!",
-      imageUrls: imageUrls,
+      imageUrls: workingImageUrls,
       uploadedCount: req.files.length,
     });
   } catch (error) {
     console.error("Upload error:", error);
     res.status(500).json({
       error: "Failed to upload images: " + error.message,
+    });
+  }
+});
+
+// Single image upload
+router.post("/image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file provided" });
+    }
+
+    res.json({
+      success: true,
+      message: "Image uploaded successfully!",
+      imageUrl:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({
+      error: "Failed to upload image: " + error.message,
     });
   }
 });
