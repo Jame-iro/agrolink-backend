@@ -55,7 +55,7 @@ router.post("/telegram", async (req, res) => {
       user: {
         id: user._id,
         telegramId: user.telegramId,
-        firstName: user.firstName,
+        first_name: user.firstName,
         username: user.username,
         role: user.role,
       },
