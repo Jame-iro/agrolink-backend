@@ -54,7 +54,7 @@ router.post("/image", upload.single("image"), async (req, res) => {
       res.json({
         success: true,
         imageUrl: response.data.data.url,
-        thumbUrl: response.data.data.thumb.url, 
+        thumbUrl: response.data.data.thumb.url,
         deleteUrl: response.data.data.delete_url,
       });
     } else {
