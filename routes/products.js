@@ -45,26 +45,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Create new product
 router.post("/", async (req, res) => {
   try {
     console.log("Received product data:", req.body);
-
-    let farmerTelegramId = req.body.farmerTelegramId;
-
-    if (
-      typeof farmerTelegramId === "string" &&
-      farmerTelegramId.length === 24 &&
-      /^[0-9a-fA-F]{24}$/.test(farmerTelegramId)
-    ) {
-      return res.status(400).json({
-        error:
-          "farmerTelegramId should be a Telegram user ID (number), not MongoDB ObjectId",
-      });
-    }
-
-    if (typeof farmerTelegramId === "string") {
-      farmerTelegramId = parseInt(farmerTelegramId);
-    }
 
     const product = new Product({
       name: req.body.name,
@@ -73,17 +57,16 @@ router.post("/", async (req, res) => {
       category: req.body.category,
       stock: req.body.stock,
       location: req.body.location,
-      farmerId: req.body.farmerId,
-      farmerTelegramId: farmerTelegramId,
+      farmerTelegramId: req.body.farmerTelegramId,
       farmerName: req.body.farmerName,
       farmerUsername: req.body.farmerUsername,
-      images: req.body.images || [],
+      images: req.body.images || [], // Store URLs, not full base64
       tags: req.body.tags || [],
       isAvailable: req.body.stock > 0,
     });
 
     await product.save();
-    console.log("Product saved:", product);
+    console.log("Product saved with image references");
 
     res.status(201).json(product);
   } catch (error) {
