@@ -6,14 +6,18 @@ const router = express.Router();
 // Get all products
 router.get("/", async (req, res) => {
   try {
-    const { category, farmerId, search } = req.query;
+    const { category, farmerTelegramId, search } = req.query;
     let query = { isAvailable: true };
 
     if (category) query.category = category;
-    if (farmerId) query.farmerTelegramId = parseInt(farmerId);
+    if (farmerTelegramId) {
+      query.farmerTelegramId = parseInt(farmerTelegramId);
+    }
     if (search) {
       query.$text = { $search: search };
     }
+
+    console.log("Fetching products with query:", query);
 
     const products = await Product.find(query)
       .populate("farmerId", "firstName username farmName")
